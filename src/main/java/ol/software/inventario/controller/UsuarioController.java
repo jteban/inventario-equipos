@@ -1,11 +1,17 @@
 package ol.software.inventario.controller;
 
+import com.lowagie.text.DocumentException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import javax.validation.Valid;
-import ol.software.inventario.entity.AreaEntity;
 import ol.software.inventario.entity.UsuarioEntity;
 import ol.software.inventario.service.UsuarioService;
+import ol.software.inventario.util.CSVGenerarReporte;
+import ol.software.inventario.util.PDFGenerarReporte;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,10 +27,15 @@ import java.util.List;
 @RequestMapping("usuario")
 public class UsuarioController {
 
+    private final CSVGenerarReporte csvGenerarReporte;
+    private final PDFGenerarReporte pdfGenerarReporte;
+
     private final UsuarioService usuarioService;
 
     @Autowired
-    public UsuarioController(UsuarioService usuarioService) {
+    public UsuarioController(CSVGenerarReporte csvGenerarReporte, PDFGenerarReporte pdfGenerarReporte, UsuarioService usuarioService) {
+        this.csvGenerarReporte = csvGenerarReporte;
+        this.pdfGenerarReporte = pdfGenerarReporte;
         this.usuarioService = usuarioService;
     }
 
@@ -54,6 +65,34 @@ public class UsuarioController {
     public ResponseEntity<Void> eliminarUsuario(@PathVariable Long id) {
         usuarioService.eliminarUsuario(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/generarReporteCSV")
+    public ResponseEntity<byte[]> generarReporteCSV() throws IOException {
+        List<UsuarioEntity> usuarios = usuarioService.obtenerTodosLosUsuarios();
+
+        String fileName = "reporte_usuarios.csv";
+        csvGenerarReporte.generarCSVReporte(usuarios, fileName);
+
+        byte[] fileBytes = Files.readAllBytes(Paths.get(fileName));
+        return ResponseEntity.ok()
+          .contentType(MediaType.APPLICATION_OCTET_STREAM)
+          .header("Content-Disposition", "attachment; filename=" + fileName)
+          .body(fileBytes);
+    }
+
+    @GetMapping("/generarReportePDF")
+    public ResponseEntity<byte[]> generarReportePDF() throws IOException, DocumentException {
+        List<UsuarioEntity> usuarios = usuarioService.obtenerTodosLosUsuarios();
+
+        String fileName = "reporte_usuarios.pdf";
+        pdfGenerarReporte.generarPDFReporte(usuarios, fileName);
+
+        byte[] fileBytes = Files.readAllBytes(Paths.get(fileName));
+        return ResponseEntity.ok()
+          .contentType(MediaType.APPLICATION_OCTET_STREAM)
+          .header("Content-Disposition", "attachment; filename=" + fileName)
+          .body(fileBytes);
     }
 
 }

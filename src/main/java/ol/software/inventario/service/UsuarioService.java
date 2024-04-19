@@ -57,4 +57,8 @@ public class UsuarioService {
     public void eliminarUsuario(Long id) {
         usuarioRepository.deleteById(id);
     }
+
+    public UsuarioEntity obtenerUsuarioPorUsuarioAndPassword(String usuario, String password) {
+        return usuarioRepository.findByUsuarioAndPassword(usuario, password);
+    }
 }
