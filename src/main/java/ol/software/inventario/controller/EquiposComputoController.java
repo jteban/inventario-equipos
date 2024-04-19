@@ -1,8 +1,11 @@
 package ol.software.inventario.controller;
 
 import java.util.List;
+import ol.software.inventario.entity.AreaEntity;
 import ol.software.inventario.entity.EquiposComputoEntity;
 import ol.software.inventario.service.EquiposComputoService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,19 +36,20 @@ public class EquiposComputoController {
     }
 
     @PostMapping("/crear")
-    public EquiposComputoEntity crearEquipo(@RequestBody EquiposComputoEntity equipos){
-        return equiposComputoService.crearEquipo(equipos);
+    public ResponseEntity<EquiposComputoEntity> crearEquipo(@RequestBody EquiposComputoEntity equipos) {
+        EquiposComputoEntity nuevaEquipo = equiposComputoService.crearEquipo(equipos);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevaEquipo);
     }
 
     @PutMapping("/actualizar/{id}")
-    public EquiposComputoEntity actualizarEquipo(@PathVariable Long id, @RequestBody EquiposComputoEntity equipos) {
-        return equiposComputoService.actualizarEquipo(id, equipos);
+    public ResponseEntity<EquiposComputoEntity> actualizarEquipo(@PathVariable Long id, @RequestBody EquiposComputoEntity area) {
+        EquiposComputoEntity actualizarEquipo = equiposComputoService.actualizarEquipo(id, area);
+        return ResponseEntity.status(HttpStatus.OK).body(actualizarEquipo);
     }
-
 
     @DeleteMapping("/eliminar/{id}")
-    public void eliminarEquipo(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminarEquipo(@PathVariable Long id) {
         equiposComputoService.eliminarEquipo(id);
+        return ResponseEntity.noContent().build();
     }
-
 }

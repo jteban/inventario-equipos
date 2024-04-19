@@ -1,8 +1,12 @@
 package ol.software.inventario.controller;
 
+import javax.validation.Valid;
+import ol.software.inventario.entity.AreaEntity;
 import ol.software.inventario.entity.UsuarioEntity;
 import ol.software.inventario.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,18 +39,21 @@ public class UsuarioController {
     }
 
     @PostMapping("/crear")
-    public UsuarioEntity crearUsuario(@RequestBody UsuarioEntity usuario){
-        return usuarioService.crearUsuario(usuario);
+    public ResponseEntity<UsuarioEntity> crearUsuario(@Valid @RequestBody UsuarioEntity usuario) {
+        UsuarioEntity nuevoUsuario = usuarioService.crearUsuario(usuario);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
     }
 
     @PutMapping("/actualizar/{id}")
-    public UsuarioEntity actualizarUsuario(@PathVariable Long id, @RequestBody UsuarioEntity usuario) {
-        return usuarioService.actualizarUsuario(id, usuario);
+    public ResponseEntity<UsuarioEntity> actualizarUsuario(@Valid @PathVariable Long id, @RequestBody UsuarioEntity usuario) {
+        UsuarioEntity actualizarUsuario = usuarioService.actualizarUsuario(id, usuario);
+        return ResponseEntity.status(HttpStatus.OK).body(actualizarUsuario);
     }
 
     @DeleteMapping("/eliminar/{id}")
-    public void eliminarUsuario(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminarUsuario(@PathVariable Long id) {
         usuarioService.eliminarUsuario(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

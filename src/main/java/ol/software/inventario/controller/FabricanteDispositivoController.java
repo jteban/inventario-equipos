@@ -1,8 +1,11 @@
 package ol.software.inventario.controller;
 
 import java.util.List;
+import ol.software.inventario.entity.AreaEntity;
 import ol.software.inventario.entity.FabricanteDispositivoEntity;
 import ol.software.inventario.service.FabricanteDispositivoService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,25 +29,27 @@ public class FabricanteDispositivoController {
     public  List<FabricanteDispositivoEntity> obtenerTodosLosFabricantes(){
         return fabricanteDispositivoService.obtenerTodosLosFabricantes();
     }
-    @GetMapping("/equiposPorId/{id}")
+    @GetMapping("/fabricantesPorId/{id}")
     public  FabricanteDispositivoEntity obtenerFabricantePorId(@PathVariable Long id){
         return fabricanteDispositivoService.obtenerFabricantePorId(id);
     }
 
     @PostMapping("/crear")
-    public FabricanteDispositivoEntity crearFabricante(@RequestBody FabricanteDispositivoEntity fabricante){
-        return fabricanteDispositivoService.crearFabricante(fabricante);
+    public ResponseEntity<FabricanteDispositivoEntity> crearFabricante(@RequestBody FabricanteDispositivoEntity fabricante) {
+        FabricanteDispositivoEntity nuevoFabricante = fabricanteDispositivoService.crearFabricante(fabricante);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoFabricante);
     }
 
     @PutMapping("/actualizar/{id}")
-    public FabricanteDispositivoEntity actualizarFabricante(@PathVariable Long id, @RequestBody FabricanteDispositivoEntity fabricante) {
-        return fabricanteDispositivoService.actualizarFabricante(id, fabricante);
+    public ResponseEntity<FabricanteDispositivoEntity> actualizarFabricante(@PathVariable Long id, @RequestBody FabricanteDispositivoEntity fabricante) {
+        FabricanteDispositivoEntity actualizarFabricante = fabricanteDispositivoService.actualizarFabricante(id, fabricante);
+        return ResponseEntity.status(HttpStatus.OK).body(actualizarFabricante);
     }
 
-
     @DeleteMapping("/eliminar/{id}")
-    public void eliminarFabricante(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminarFabricante(@PathVariable Long id) {
         fabricanteDispositivoService.eliminarFabricante(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

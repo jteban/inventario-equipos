@@ -2,6 +2,9 @@ package ol.software.inventario.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
 import ol.software.inventario.entity.UsuarioEntity;
 import ol.software.inventario.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +13,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class UsuarioService {
 
+    @Autowired
+    private Validator validator;
     private final UsuarioRepository usuarioRepository;
 
     @Autowired
@@ -27,6 +32,17 @@ public class UsuarioService {
     }
 
     public UsuarioEntity crearUsuario(UsuarioEntity usuario) {
+        Set<ConstraintViolation<UsuarioEntity>> constraintViolations = validator.validate(usuario);
+
+        if (!constraintViolations.isEmpty()) {
+            // Manejar las violaciones de validación
+            StringBuilder messageBuilder = new StringBuilder();
+            for (ConstraintViolation<UsuarioEntity> violation : constraintViolations) {
+                messageBuilder.append(violation.getMessage()).append("\n");
+            }
+            throw new IllegalArgumentException(messageBuilder.toString());
+        }
+
         return usuarioRepository.save(usuario);
     }
 

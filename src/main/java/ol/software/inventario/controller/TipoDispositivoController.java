@@ -1,9 +1,12 @@
 package ol.software.inventario.controller;
 
 import java.util.List;
+import ol.software.inventario.entity.AreaEntity;
 import ol.software.inventario.entity.TipoDispositivoEntity;
 import ol.software.inventario.service.TipoDispositivoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,19 +37,22 @@ public class TipoDispositivoController {
     }
 
     @PostMapping("/crear")
-    public TipoDispositivoEntity crearTiposDispositivos(@RequestBody TipoDispositivoEntity tipoDispositivo){
-        return tipoDispositivoService.crearTiposDispositivos(tipoDispositivo);
+    public ResponseEntity<TipoDispositivoEntity> crearTiposDispositivos(@RequestBody TipoDispositivoEntity tipoDispositivo) {
+        TipoDispositivoEntity nuevoTipo = tipoDispositivoService.crearTiposDispositivos(tipoDispositivo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoTipo);
     }
 
     @PutMapping("/actualizar/{id}")
-    public TipoDispositivoEntity actualizarTiposDispositivos(@PathVariable Long id, @RequestBody TipoDispositivoEntity tipoDispositivo) {
-        return tipoDispositivoService.actualizarTiposDispositivos(id, tipoDispositivo);
+    public ResponseEntity<TipoDispositivoEntity> actualizarTiposDispositivos(@PathVariable Long id, @RequestBody TipoDispositivoEntity tipoDispositivo) {
+        TipoDispositivoEntity actualizarTiposDispositivos = tipoDispositivoService.actualizarTiposDispositivos(id, tipoDispositivo);
+        return ResponseEntity.status(HttpStatus.OK).body(actualizarTiposDispositivos);
     }
-
 
     @DeleteMapping("/eliminar/{id}")
-    public void eliminarTiposDispositivos(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminarTiposDispositivos(@PathVariable Long id) {
         tipoDispositivoService.eliminarTiposDispositivos(id);
+        return ResponseEntity.noContent().build();
     }
+
 
 }

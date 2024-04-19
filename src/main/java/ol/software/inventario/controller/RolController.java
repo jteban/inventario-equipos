@@ -1,9 +1,12 @@
 package ol.software.inventario.controller;
 
 import java.util.List;
+import ol.software.inventario.entity.AreaEntity;
 import ol.software.inventario.entity.RolEntity;
 import ol.software.inventario.service.RolService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,20 +37,21 @@ public class RolController {
     }
 
     @PostMapping("/crear")
-    public RolEntity crearRol(@RequestBody RolEntity rol){
-
-        return rolService.crearRol(rol);
+    public ResponseEntity<RolEntity> crearRol(@RequestBody RolEntity rol) {
+        RolEntity nuevoRol = rolService.crearRol(rol);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoRol);
     }
 
     @PutMapping("/actualizar/{id}")
-    public RolEntity actualizarRol(@PathVariable Long id, @RequestBody RolEntity rol) {
-        return rolService.actualizarRol(id, rol);
+    public ResponseEntity<RolEntity> actualizarRol(@PathVariable Long id, @RequestBody RolEntity rol) {
+        RolEntity actualizarRol = rolService.actualizarRol(id, rol);
+        return ResponseEntity.status(HttpStatus.OK).body(actualizarRol);
     }
 
-
     @DeleteMapping("/eliminar/{id}")
-    public void eliminarRol(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminarRol(@PathVariable Long id) {
         rolService.eliminarRol(id);
+        return ResponseEntity.noContent().build();
     }
 
 }
